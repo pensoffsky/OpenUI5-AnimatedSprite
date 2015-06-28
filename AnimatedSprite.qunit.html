@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Image - sap.m - qUnit test</title>
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="https://sapui5.netweaver.ondemand.com/resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{"view": "./view"}' >
+		</script>
+		<link rel="stylesheet" href="https://sapui5.netweaver.ondemand.com/resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="https://sapui5.netweaver.ondemand.com/resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="https://sapui5.netweaver.ondemand.com/resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="https://sapui5.netweaver.ondemand.com/resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="https://sapui5.netweaver.ondemand.com/resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="https://sapui5.netweaver.ondemand.com/resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+		sinon.config.useFakeTimers = false;
+		var sSrc = "view/sprite.png",
+			sTooltip = "tooltip",
+			sAlt = "alternative text",
+			sWidth = "48px",
+			sHeight = "92px",
+			iWidth = 220,
+			bVisible = true;
+		function handleEvent() {
+			test("click", function() {
+				ok(true);
+			});
+		}
+		jQuery.sap.require("view.AnimatedSprite");
+		var i1 = new view.AnimatedSprite("i1");
+		i1.setSrc(sSrc);
+		i1.setWidth(sWidth);
+		i1.setHeight(sHeight);
+		i1.setVisible(bVisible);
+		i1.setTooltip(sTooltip);
+		i1.placeAt("uiArea1");
+		
+		/* tests */
+		test("Initial Check", function() {
+			i1 = sap.ui.getCore().byId("i1");
+			ok((i1 !== undefined) && (i1 != null), "i1 should not be null");
+		});
+		
+		test("Alt text and tooltip", function() {
+			// i1 is decorative, i2 not
+			// read alt attribute from DOM
+			equal(jQuery.sap.byId(i1.getId()).attr("alt"), sAlt,  "alt text of i2 should be rendered");
+			
+			// read title attribute from DOM
+			equal(jQuery.sap.byId(i1.getId()).attr("title"), sTooltip, "tooltip text of i1 should be rendered");
+		});
+		test("Offset Dimensions", function() {
+			// test the initial dimensions
+			var oDomRef = jQuery.sap.domById("i1");
+			equals(oDomRef.offsetWidth, parseInt(i1.getWidth()), "i1.offsetWidth should equal parseInt(i1.getWidth())");
+			equals(oDomRef.offsetHeight, parseInt(i1.getHeight()), "i1.offsetHeight should equal parseInt(i1.getHeight())");
+		});
+		asyncTest("Dimension Changes", function() {
+			// test changed dimensions
+			i1.setWidth("292px");
+			i1.setHeight("292px");
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				oDomRef = window.document.getElementById("i1");
+				equals(oDomRef.offsetWidth, 292, "i1.offsetWidth should equal 292");
+				equals(oDomRef.offsetHeight, 292, "i1.offsetHeight should equal 292");
+				start();
+			}, 100);
+		});
+
+		test("Image with Invalid src", function() {
+			var $i2 = jQuery.sap.byId("i2");
+			equal($i2.css("visibility"), "hidden", "Image with invalid src should be hidden");
+		});
+		asyncTest("Set image with invalid src to a valid src", function() {
+			i2.setSrc(sSrc);
+			setTimeout(function() {
+				var $i2 = jQuery.sap.byId("i2");
+				equal($i2.css("visibility"), "visible", "Image with valid src should be set back to visible");
+				start();
+			}, 200);
+		});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for sap.m.Image</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+
+		<div id="uiArea1"></div>
+	</body>
+</html>

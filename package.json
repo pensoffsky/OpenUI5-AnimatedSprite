@@ -1,0 +1,9 @@
+{
+  "name": "OpenUI5-AnimatedSprite",
+  "version": "0.1.0",
+  "main": "index.html",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-browser-sync": "^2.1.3"
+  }
+}
